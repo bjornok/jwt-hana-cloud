@@ -6,6 +6,28 @@ This project provides sample code (C++ and Python) to demonstrate how to authent
 
 The samples illustrate the **Device Code Flow** to obtain a JWT token from Entra ID and use that token to establish an ODBC connection to SAP HANA Cloud. This approach allows for secure, scalable authentication mapped to user email addresses.
 
+## Mandatory Requirements
+
+For this integration to function, the following configurations are strictly required:
+
+### 1. Entra ID App Registration
+- **AccessToken Version 2:** You must set `"requestedAccessTokenVersion": 2` in the application manifest. SAP HANA Cloud requires v2 tokens for validation.
+- **Public Client Flow:** Under **Authentication > Advanced settings**, "Allow public client flows" must be set to **Yes**. This is required for Device Code and Password flows.
+- **Scopes:** While you must request a scope (e.g., `api://<CLIENT_ID>/access_as_user`) to receive a valid access token, the **`scp` (scope) claim itself is not used** by SAP HANA for identity mapping or authentication.
+
+### 2. SAP HANA Cloud Configuration
+- **JWT Provider:** A JWT Provider must be created in HANA with the correct `ISSUER` (e.g., `https://login.microsoftonline.com/<TENANT_ID>/v2.0`).
+- **Identity Mapping:** The Provider must specify which claim to use for mapping (typically `preferred_username` or `email`).
+- **Certificate Trust:** The Entra ID public certificate matching the token's `kid` (Key ID) must be imported into a HANA PSE and linked to the JWT Provider.
+- **User Activation:** Each HANA user must be explicitly mapped to their Entra ID identity:
+  ```sql
+  ALTER USER <HANA_USER> ADD IDENTITY '<user@email.com>' FOR JWT PROVIDER <PROVIDER_NAME>;
+  ALTER USER <HANA_USER> ENABLE JWT;
+  ```
+
+### 3. Connection Security
+- **Encryption:** `ENCRYPT=TRUE` is mandatory in the ODBC connection string. JWT tokens will not be accepted over unencrypted connections.
+
 ## Prerequisites
 
 - **SAP HANA Client:** Installed on your system (provides the `HDBODBC` driver).
