@@ -25,8 +25,12 @@ For this integration to function, the following configurations are strictly requ
   ALTER USER <HANA_USER> ENABLE JWT;
   ```
 
-### 3. Connection Security
-- **Encryption:** `ENCRYPT=TRUE` is mandatory in the ODBC connection string. JWT tokens will not be accepted over unencrypted connections.
+### 3. Connection parameters
+- **Encryption:** `ENCRYPT=TRUE` is mandatory. JWT tokens will not be accepted over unencrypted connections.
+- **Connection String Sample:**
+  ```text
+  Driver=HDBODBC;ServerNode=<HANA_ENDPOINT>;authenticationMethods=JWT;PWD=<JWT_TOKEN>;ENCRYPT=TRUE;sslValidateCertificate=TRUE;
+  ```
 
 ## Prerequisites
 
