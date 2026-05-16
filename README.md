@@ -13,7 +13,7 @@ For this integration to function, the following configurations are strictly requ
 ### 1. Entra ID App Registration
 - **AccessToken Version 2:** You must set `"requestedAccessTokenVersion": 2` in the application manifest. SAP HANA Cloud requires v2 tokens for validation.
 - **Public Client Flow:** Under **Authentication > Advanced settings**, "Allow public client flows" must be set to **Yes**. This is required for Device Code and Password flows.
-- **Scopes:** While you must request a scope (e.g., `api://<CLIENT_ID>/access_as_user`) to receive a valid access token, the **`scp` (scope) claim itself is not used** by SAP HANA for identity mapping or authentication.
+- **Scopes:** You must request a scope (e.g., `api://<CLIENT_ID>/access_as_user` or a generic scope) to receive a valid access token. However, the **`scp` (scope) claim itself is not used** by SAP HANA for identity mapping or authentication; only a valid token is required.
 
 ### 2. SAP HANA Cloud Configuration
 - **JWT Provider:** A JWT Provider must be created in HANA with the correct `ISSUER` (e.g., `https://login.microsoftonline.com/<TENANT_ID>/v2.0`).
